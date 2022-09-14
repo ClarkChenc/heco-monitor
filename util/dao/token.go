@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/jinzhu/gorm"
 	"github.com/shopspring/decimal"
@@ -29,7 +29,6 @@ var (
 )
 
 func init() {
-	fmt.Println("get")
 	TokenMap = make(map[string]Token)
 
 	TokenMap["ETH"] = Token{
@@ -212,6 +211,10 @@ func (t *Token) TableName() string {
 }
 
 func (t *Token) Update(db *gorm.DB) error {
-	res := db.Save(t)
+	res := db.Where("heco_address=?", t.HecoAddress).Last(t)
+	if res.Error == nil || errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		res = db.Save(t)
+		return res.Error
+	}
 	return res.Error
 }

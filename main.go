@@ -56,13 +56,16 @@ func OnTick() {
 		hecoDecimals, _ := hecoContract.Decimals(nil)
 		token.HecoDecimals = int(hecoDecimals)
 
-		token.Update(util.GetDB())
+		if err := token.Update(util.GetDB()); err != nil {
+			fmt.Println(err)
+		}
 	}
+	fmt.Println("update successfully")
 }
 
 func main() {
 	ctx := context.Background()
-	ticker := time.NewTicker(10 * time.Minute)
+	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 
 	for {
