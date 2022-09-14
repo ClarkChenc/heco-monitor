@@ -13,5 +13,4 @@ clean:
 image: build
 	docker build -t ${DOCKER_IMAGE} .
 
-
 .PHONY: contracts build

@@ -9,13 +9,9 @@ USE heco_monitor;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%'  WITH GRANT OPTION;
 flush privileges;
 
-CREATE TABLE IF NOT EXISTS  `token` (
+CREATE TABLE IF NOT EXISTS  `bridge_token` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `token_name` varchar(10) COMMENT 'token_name',
-
-  `root_chain_address` varchar(64) binary DEFAULT NULL COMMENT 'root_chain_address',
-  `root_chain_amount` DECIMAL(64, 0) COMMENT 'root_chain_amount',
-  `root_chain_decimals` int COMMENT 'root_chain_decimals',
 
   `eth_address` varchar(64) binary NOT NULL COMMENT 'eth_address',
   `eth_amount` DECIMAL(64, 0) COMMENT 'eth_amount',

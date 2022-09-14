@@ -43,11 +43,20 @@ func OnTick() {
 	var wg sync.WaitGroup
 	for _, t := range dao.TokenMap {
 		wg.Add(1)
-		go func(token dao.Token) {
+		go func(token dao.BridgeToken) {
 			defer wg.Done()
 			if token.EthAddress != "0x0000000000000000000000000000000000000001" {
-				ethContract, _ := erc20.NewErc20(common.HexToAddress(token.EthAddress), ethClient)
-				amount, _ := ethContract.BalanceOf(nil, common.HexToAddress("0xa929022c9107643515f5c777ce9a910f0d1e490c"))
+				ethContract, err := erc20.NewErc20(common.HexToAddress(token.EthAddress), ethClient)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				amount, err := ethContract.BalanceOf(nil, common.HexToAddress("0xa929022c9107643515f5c777ce9a910f0d1e490c"))
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
 				token.EthAmount = decimal.NewFromBigInt(amount, 0)
 				decimals, _ := ethContract.Decimals(nil)
 				token.EthDecimals = int(decimals)
@@ -58,11 +67,28 @@ func OnTick() {
 				token.EthDecimals = 18
 			}
 
-			hecoContract, _ := erc20.NewErc20(common.HexToAddress(token.HecoAddress), hecoClient)
-			hecoAmount, _ := hecoContract.TotalSupply(nil)
+			hecoContract, err := erc20.NewErc20(common.HexToAddress(token.HecoAddress), hecoClient)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			hecoAmount, err := hecoContract.TotalSupply(nil)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 			token.HecoAmount = decimal.NewFromBigInt(hecoAmount, 0)
-			hecoDecimals, _ := hecoContract.Decimals(nil)
+
+			hecoDecimals, err := hecoContract.Decimals(nil)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 			token.HecoDecimals = int(hecoDecimals)
+
+			if err := token.Update(util.GetDB()); err != nil {
+				fmt.Println(err)
+			}
 
 			eAmount := (float64)(hecoAmount.Div(hecoAmount,
 				big.NewInt(10).Exp(big.NewInt(10), big.NewInt(int64(token.EthDecimals)-3), nil)).Uint64()) / 1000
@@ -79,9 +105,6 @@ func OnTick() {
 			influx.WriteRecord("bridge",
 				map[string]string{"chain": "diff", "token": token.TokenName},
 				map[string]interface{}{"amount": eAmount - hAmount})
-			if err := token.Update(util.GetDB()); err != nil {
-				fmt.Println(err)
-			}
 		}(t)
 	}
 	wg.Wait()
