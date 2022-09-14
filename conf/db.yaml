@@ -8,3 +8,9 @@ monitorDB:
   username: root
   password: "123456"
   charset: utf8
+
+influxDB:
+  url: 127.0.0.1
+  token: token
+  bucket: bucket_name
+  org: org_name

@@ -1,2 +1,5 @@
 .idea
+
+conf/localdb.yaml
+
 heco-monitor

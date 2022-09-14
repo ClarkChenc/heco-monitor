@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -11,17 +12,19 @@ import (
 	"github.com/x-project/heco/abi/erc20"
 	"github.com/x-project/heco/util"
 	"github.com/x-project/heco/util/dao"
+	"github.com/x-project/heco/util/influx"
 )
 
-type ChainType uint
-
-//service 公共初始化
+// service 公共初始化
 func init() {
 	//db 配置文件加载
 	util.InitDBconfig()
 
 	//InitDB
 	util.InitDB()
+
+	//InitInfluxDB
+	influx.InitInflux2()
 }
 
 func OnTick() {
@@ -56,6 +59,21 @@ func OnTick() {
 		hecoDecimals, _ := hecoContract.Decimals(nil)
 		token.HecoDecimals = int(hecoDecimals)
 
+		eAmount := (float64)(hecoAmount.Div(hecoAmount,
+			big.NewInt(10).Exp(big.NewInt(10), big.NewInt(int64(token.EthDecimals)-3), nil)).Uint64()) / 1000
+		influx.WriteRecord("bridge",
+			map[string]string{"chain": "eth", "token": token.TokenName},
+			map[string]interface{}{"amount": eAmount})
+
+		hAmount := (float64)(hecoAmount.Div(hecoAmount,
+			big.NewInt(10).Exp(big.NewInt(10), big.NewInt(int64(token.HecoDecimals)-3), nil)).Uint64()) / 1000
+		influx.WriteRecord("bridge",
+			map[string]string{"chain": "heco", "token": token.TokenName},
+			map[string]interface{}{"amount": hAmount})
+
+		influx.WriteRecord("bridge",
+			map[string]string{"chain": "diff", "token": token.TokenName},
+			map[string]interface{}{"amount": eAmount - hAmount})
 		if err := token.Update(util.GetDB()); err != nil {
 			fmt.Println(err)
 		}
@@ -74,6 +92,7 @@ func main() {
 			OnTick()
 
 		case <-ctx.Done():
+			influx.CloseInflux2()
 			fmt.Print("ticker stop")
 		}
 	}
