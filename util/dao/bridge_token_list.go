@@ -12,8 +12,8 @@ func init() {
 		EthAddress:  "0x0000000000000000000000000000000000000001",
 		HecoAddress: "0x64FF637fB478863B7468bc97D30a5bF3A428a1fD",
 	}
-	TokenMap["UDST"] = BridgeToken{
-		TokenName: "UDST",
+	TokenMap["USDT"] = BridgeToken{
+		TokenName: "USDT",
 
 		EthAddress:  "0xdac17f958d2ee523a2206206994597c13d831ec7",
 		HecoAddress: "0xa71edc38d189767582c38a3145b5873052c3e47a",
