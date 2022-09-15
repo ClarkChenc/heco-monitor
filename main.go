@@ -45,25 +45,26 @@ func OnTick() {
 		wg.Add(1)
 		go func(token dao.BridgeToken) {
 			defer wg.Done()
+			var ethAmount *big.Int
 			if token.EthAddress != "0x0000000000000000000000000000000000000001" {
 				ethContract, err := erc20.NewErc20(common.HexToAddress(token.EthAddress), ethClient)
 				if err != nil {
 					fmt.Println(err)
 					return
 				}
-				amount, err := ethContract.BalanceOf(nil, common.HexToAddress("0xa929022c9107643515f5c777ce9a910f0d1e490c"))
+				ethAmount, err = ethContract.BalanceOf(nil, common.HexToAddress("0xa929022c9107643515f5c777ce9a910f0d1e490c"))
 				if err != nil {
 					fmt.Println(err)
 					return
 				}
 
-				token.EthAmount = decimal.NewFromBigInt(amount, 0)
+				token.EthAmount = decimal.NewFromBigInt(ethAmount, 0)
 				decimals, _ := ethContract.Decimals(nil)
 				token.EthDecimals = int(decimals)
 
 			} else {
-				amount, _ := ethClient.BalanceAt(context.Background(), common.HexToAddress("0xa929022c9107643515f5c777ce9a910f0d1e490c"), nil)
-				token.EthAmount = decimal.NewFromBigInt(amount, 0)
+				ethAmount, _ = ethClient.BalanceAt(context.Background(), common.HexToAddress("0xa929022c9107643515f5c777ce9a910f0d1e490c"), nil)
+				token.EthAmount = decimal.NewFromBigInt(ethAmount, 0)
 				token.EthDecimals = 18
 			}
 
@@ -90,7 +91,7 @@ func OnTick() {
 				fmt.Println(err)
 			}
 
-			eAmount := (float64)(hecoAmount.Div(hecoAmount,
+			eAmount := (float64)(ethAmount.Div(ethAmount,
 				big.NewInt(10).Exp(big.NewInt(10), big.NewInt(int64(token.EthDecimals)-3), nil)).Uint64()) / 1000
 			influx.WriteRecord("bridge",
 				map[string]string{"chain": "eth", "token": token.TokenName},
