@@ -23,5 +23,36 @@ CREATE TABLE IF NOT EXISTS  `bridge_token` (
 
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `heco_address` (`heco_address`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE IF NOT EXISTS  `root_token` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `token_name` varchar(10) COMMENT 'token_name',
+
+  `root_amount` DECIMAL(64, 0) COMMENT 'root_amount',
+  `root_decimals` int COMMENT 'root_decimals',
+
+  `eth_address` varchar(64) binary NOT NULL COMMENT 'eth_address',
+  `eth_amount` DECIMAL(64, 0) COMMENT 'eth_amount',
+  `eth_decimals` int COMMENT 'eth_decimals',
+
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `eth_address` (`eth_address`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE IF NOT EXISTS  `root_account_token` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `token_name` varchar(10) COMMENT 'token_name',
+
+  `account` varchar(64) binary NOT NULL COMMENT 'account',
+  `account_balance` double COMMENT 'account_balance',
+
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `token_name__account` (`token_name`, `account`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
