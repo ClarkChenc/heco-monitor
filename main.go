@@ -47,6 +47,11 @@ func GetBridgeToken() {
 					fmt.Println(err)
 					return
 				}
+				if token.EthAddress == "0xdac17f958d2ee523a2206206994597c13d831ec7" {
+					// extra usdt deposited in hub address
+					hubAmount, _ := ethContract.BalanceOf(nil, common.HexToAddress("0xbc53b706b165d2b7e98f254095d9d342e845e5ac"))
+					ethAmount = ethAmount.Add(ethAmount, hubAmount)
+				}
 
 				token.EthAmount = decimal.NewFromBigInt(ethAmount, 0)
 				decimals, _ := ethContract.Decimals(nil)
