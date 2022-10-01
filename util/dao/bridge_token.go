@@ -15,6 +15,7 @@ type BridgeToken struct {
 	EthAddress  string          `gorm:"column:eth_address" json:"ethAddress"`
 	EthAmount   decimal.Decimal `gorm:"column:eth_amount" json:"ethAmount"`
 	EthDecimals int             `gorm:"column:eth_decimals" json:"ethDecimals"`
+	AssertType  int             `gorm:"column:assert_type" json:"assertType"`
 
 	HecoAddress  string          `gorm:"column:heco_address" json:"hecoAddress"`
 	HecoAmount   decimal.Decimal `gorm:"column:heco_amount" json:"hecoAmount"`

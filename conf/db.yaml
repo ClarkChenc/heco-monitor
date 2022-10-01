@@ -1,10 +1,11 @@
 monitorDB:
   driverName: mysql
 
-  host: 127.0.0.1
+  # host: 127.0.0.1
+  host: 54.173.172.27
   port: 3306
 
-  database: heco_monitor
+  database: heco_monitor_test
   username: root
   password: "123456"
   charset: utf8

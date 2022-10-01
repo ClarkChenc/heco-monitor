@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS  `bridge_token` (
   `eth_address` varchar(64) binary NOT NULL COMMENT 'eth_address',
   `eth_amount` DECIMAL(64, 0) COMMENT 'eth_amount',
   `eth_decimals` int COMMENT 'eth_decimals',
+  `assert_type` int COMMENT 'assert_type',
 
   `heco_address` varchar(64) binary NOT NULL COMMENT 'heco_address',
   `heco_amount` DECIMAL(64, 0) COMMENT 'heco_amount',
