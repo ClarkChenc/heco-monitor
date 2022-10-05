@@ -36,7 +36,7 @@ func init() {
 		TokenName:  "HBC",
 		AssertType: 3,
 
-		EthAddress:  "0xfc29b6e626b67776675fff55d5bc0452d042f434",
+		EthAddress:  "0x28Da24ed20906CDE186D8B4f83412C3AE37a6269",
 		HecoAddress: "0x894b2917c783514c9e4c24229bF60f3Cb4c9c905",
 	}
 
