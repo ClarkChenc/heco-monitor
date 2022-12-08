@@ -34,22 +34,23 @@ CREATE TABLE IF NOT EXISTS  `root_token` (
 
   `root_amount` DECIMAL(64, 0) COMMENT 'root_amount',
   `root_decimals` int COMMENT 'root_decimals',
-
-  `eth_address` varchar(64) binary NOT NULL COMMENT 'eth_address',
-  `eth_amount` DECIMAL(64, 0) COMMENT 'eth_amount',
-  `eth_decimals` int COMMENT 'eth_decimals',
+  
+  `side_type` varchar(10) binary NOT NULL COMMENT 'side_type',
+  `side_address` varchar(64) binary NOT NULL COMMENT 'side_address',
+  `side_amount` DECIMAL(64, 0) COMMENT 'side_amount',
+  `side_decimals` int COMMENT 'side_decimals',
 
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   PRIMARY KEY (`id`),
-  UNIQUE KEY `eth_address` (`eth_address`)
+  UNIQUE KEY `type_address` (`side_type`, `side_address`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 CREATE TABLE IF NOT EXISTS  `root_account_token` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `token_name` varchar(10) COMMENT 'token_name',
 
-  `account` varchar(64) binary NOT NULL COMMENT 'account',
+  `account` varchar(256) binary NOT NULL COMMENT 'account',
   `account_balance` double COMMENT 'account_balance',
 
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

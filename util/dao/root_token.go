@@ -15,9 +15,10 @@ type RootToken struct {
 	RootAmount   decimal.Decimal `gorm:"column:root_amount" json:"rootAmount"`
 	RootDecimals int             `gorm:"column:root_decimals" json:"rootDecimals"`
 
-	EthAddress  string          `gorm:"column:eth_address" json:"ethAddress"`
-	EthAmount   decimal.Decimal `gorm:"column:eth_amount" json:"ethAmount"`
-	EthDecimals int             `gorm:"column:eth_decimals" json:"ethDecimals"`
+	SideType     string          `gorm:"column:side_type" json:"sideType"`
+	SideAddress  string          `gorm:"column:side_address" json:"sideAddress"`
+	SideAmount   decimal.Decimal `gorm:"column:side_amount" json:"sideAmount"`
+	SideDecimals int             `gorm:"column:side_decimals" json:"sideDecimals"`
 
 	UpdateTime time.Time `gorm:"column:update_time" json:"updateTime"`
 }
@@ -30,7 +31,7 @@ func (t *RootToken) Update(db *gorm.DB) error {
 	t.UpdateTime = time.Now()
 	newVal := *t
 	var oldVal RootToken
-	res := db.Where("eth_address=?", t.EthAddress).Last(&oldVal).Update(newVal)
+	res := db.Where("side_type=? and side_address=?", t.SideType, t.SideAddress).Last(&oldVal).Update(newVal)
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		res = db.Save(&newVal)
 		return res.Error
@@ -50,6 +51,9 @@ type RootAccountToken struct {
 
 func (t *RootAccountToken) TableName() string {
 	return "root_account_token"
+}
+func (t *RootAccountToken) Clear(db *gorm.DB) {
+	db.Where("token_name = ?", t.TokenName).Delete(&RootAccountToken{})
 }
 
 func (t *RootAccountToken) Update(db *gorm.DB) error {
